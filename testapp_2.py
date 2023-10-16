@@ -425,7 +425,9 @@ if st.sidebar.start_button:
 
 
 
-    ####################################################################
+   ###################################################################
+    #折れ線グラフがきちんと表示されない点を改善
+    ###################################################################
     # データの読み込み
     data = pd.read_csv('output_select.csv')  
 
@@ -460,6 +462,10 @@ if st.sidebar.start_button:
     # 全体平均の家賃/平米の折れ線グラフを描画（右側の軸）
     ax2.axhline(overall_avg_rent_per_sqm, color='b', linestyle='--', label='全体平均', linewidth=2)
 
+    # 新たに追加: 全体平均の家賃/平米を赤い折れ線グラフで表示
+    ax2.plot([x for x in station_avg_rent_per_sqm['駅名']], [overall_avg_rent_per_sqm] * len(station_avg_rent_per_sqm), linestyle='--', color='red', label='全体平均', linewidth=2)
+
+
     # グラフタイトル
     plt.title('各駅ごとの物件数と家賃/平米の関係')
 
@@ -473,7 +479,7 @@ if st.sidebar.start_button:
 
     # MatplotlibのFigureをStreamlitに表示
     st.pyplot(fig)
-
+    
 ##################################################
 #仮で地図を出してみる
     # df = pd.DataFrame(
