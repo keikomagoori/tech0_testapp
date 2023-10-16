@@ -5,7 +5,6 @@ import pandas as pd
 import time
 import re
 import numpy as np
-#import matplotlib.pyplot as plt
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 
@@ -217,7 +216,7 @@ if st.sidebar.start_button:
 ####フィルタリングコードを追加###################################################
 
     # output.csvからデータを読み込む
-    df = pd.read_csv('output.csv', encoding='utf-8')
+    #df = pd.read_csv('output.csv', encoding='utf-8')
     # # placeの値が存在する場合のみフィルタリングを行う
     # if place is not None and place != "":
     #     df = df[df['住所'].str.contains(place)]
