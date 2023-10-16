@@ -8,3 +8,4 @@ oauthlib==3.2.2
 geopy==2.4.0
 pip==23.3
 matplotlib
+japanize-matplotlib
