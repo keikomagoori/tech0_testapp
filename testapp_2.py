@@ -481,25 +481,25 @@ if st.sidebar.start_button:
     # columns=['lat', 'lon'])
     # st.map(df)
 
-    from geopy.geocoders import Nominatim
+    # from geopy.geocoders import Nominatim
 
-    # ジオコーディングサービスを初期化
-    geolocator = Nominatim(user_agent="geoapiExercises")
+    # # ジオコーディングサービスを初期化
+    # geolocator = Nominatim(user_agent="geoapiExercises")
 
-    # サンプルデータフレームを作成
-    data = {'住所': ['東京都千代田区', '大阪府大阪市', '京都府京都市']}
-    df = pd.DataFrame(data)
+    # # サンプルデータフレームを作成
+    # data = {'住所': ['東京都千代田区', '大阪府大阪市', '京都府京都市']}
+    # df = pd.DataFrame(data)
 
-    # 住所から緯度と経度を取得する関数を定義
-    def get_lat_lon(address):
-        location = geolocator.geocode(address)
-        if location:
-            return (location.latitude, location.longitude)
-        else:
-            return None
+    # # 住所から緯度と経度を取得する関数を定義
+    # def get_lat_lon(address):
+    #     location = geolocator.geocode(address)
+    #     if location:
+    #         return (location.latitude, location.longitude)
+    #     else:
+    #         return None
 
-    # データフレームに新しいカラムを追加して緯度と経度を取得
-    df['緯度経度'] = df['住所'].apply(get_lat_lon)
+    # # データフレームに新しいカラムを追加して緯度と経度を取得
+    # df['緯度経度'] = df['住所'].apply(get_lat_lon)
 
-    # 地図上に位置をプロット
-    st.map(df)
+    # # 地図上に位置をプロット
+    # st.map(df)
