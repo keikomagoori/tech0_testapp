@@ -7,6 +7,7 @@ import re
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
+import japanize_matplotlib
 
 
 # Streamlitアプリのタイトル
@@ -311,16 +312,16 @@ if st.sidebar.start_button:
     
     # グラフの作成
     plt.figure(figsize=(12, 6))
-    plt.rcParams['font.family'] = 'MS Gothic'  # フォントをMS Gothicに設定=文字化け対策！
+    #plt.rcParams['font.family'] = 'MS Gothic'  # フォントをMS Gothicに設定=文字化け対策！
 
     ax = station_counts.plot(kind='bar')
-    plt.title('駅名ごとの物件数', fontname='MS Gothic')
-    plt.xlabel('駅名', fontname='MS Gothic')
-    plt.ylabel('物件数', fontname='MS Gothic')
+    plt.title('駅名ごとの物件数')
+    plt.xlabel('駅名')
+    plt.ylabel('物件数')
     plt.xticks(rotation=90)  # X軸のラベルを90度回転して読みやすくする
 
     # 凡例を日本語フォントで表示
-    ax.legend(prop={'family': 'MS Gothic'})
+    #ax.legend(prop={'family': 'MS Gothic'})
 
     # グラフを表示
     st.pyplot(plt)
@@ -407,13 +408,13 @@ if st.sidebar.start_button:
 
     # MatplotlibのFigureを作成
     fig, ax = plt.subplots(figsize=(12, 6))
-    plt.rcParams['font.family'] = 'MS Gothic'  # フォントをMS Gothicに設定
+    #plt.rcParams['font.family'] = 'MS Gothic'  # フォントをMS Gothicに設定
 
     # 各駅ごとの家賃/平米の平均値を棒グラフで表示
     ax.bar(station_avg_rent_per_sqm['駅名'], station_avg_rent_per_sqm['家賃/平米'], color='b', alpha=0.7)
-    ax.set_xlabel('駅名', fontname='MS Gothic')
-    ax.set_ylabel('家賃/平米', fontname='MS Gothic')
-    ax.set_title('各駅ごとの家賃/平米の平均値', fontname='MS Gothic')
+    ax.set_xlabel('駅名')
+    ax.set_ylabel('家賃/平米')
+    ax.set_title('各駅ごとの家賃/平米の平均値')
     plt.xticks(rotation=90)  # X軸のラベルを90度回転して読みやすくする
 
     # グラフを表示
@@ -443,28 +444,28 @@ if st.sidebar.start_button:
 
     # MatplotlibのFigureを作成
     fig, ax1 = plt.subplots(figsize=(12, 6))
-    plt.rcParams['font.family'] = 'MS Gothic'  # フォントをMS Gothicに設定
+    #plt.rcParams['font.family'] = 'MS Gothic'  # フォントをMS Gothicに設定
 
     # 物件数の棒グラフを描画（左側の軸）
     ax1.bar(station_counts['駅名'], station_counts['物件数'], color='b', alpha=0.7)
-    ax1.set_xlabel('駅名', fontname='MS Gothic')
-    ax1.set_ylabel('物件数（件）', fontname='MS Gothic', color='b')
+    ax1.set_xlabel('駅名')
+    ax1.set_ylabel('物件数（件）', color='b')
     ax1.tick_params(axis='y', labelcolor='b')
 
     # 家賃/平米の折れ線グラフを描画（右側の軸）
     ax2 = ax1.twinx()
     ax2.plot(station_avg_rent_per_sqm['駅名'], station_avg_rent_per_sqm['家賃/平米'], marker='o', color='r', linestyle='-', markersize=6)
-    ax2.set_ylabel('家賃/平米（円）', fontname='MS Gothic', color='r')
+    ax2.set_ylabel('家賃/平米（円）', color='r')
 
     # 全体平均の家賃/平米の折れ線グラフを描画（右側の軸）
     ax2.axhline(overall_avg_rent_per_sqm, color='b', linestyle='--', label='全体平均', linewidth=2)
 
     # グラフタイトル
-    plt.title('各駅ごとの物件数と家賃/平米の関係', fontname='MS Gothic')
+    plt.title('各駅ごとの物件数と家賃/平米の関係')
 
     # 凡例を表示
     lines, labels = ax2.get_legend_handles_labels()
-    ax2.legend(lines, labels, loc='upper left', fontsize='medium', title_fontsize='large', prop=FontProperties(fname='MS Gothic'))
+    ax2.legend(lines, labels, loc='upper left', fontsize='medium', title_fontsize='large')
 
     # グラフを表示
     plt.xticks(rotation=90)  # X軸のラベルを90度回転して読みやすくする
