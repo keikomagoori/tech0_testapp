@@ -464,7 +464,7 @@ if st.sidebar.start_button:
 
     # 凡例を表示
     lines, labels = ax2.get_legend_handles_labels()
-    ax2.legend(lines, labels, loc='upper left', fontsize='medium', title_fontsize='large', prop=FontProperties(fname='C:/Windows/Fonts/msyh.ttc'))
+    ax2.legend(lines, labels, loc='upper left', fontsize='medium', title_fontsize='large', prop=FontProperties(fname='MS Gothic'))
 
     # グラフを表示
     plt.xticks(rotation=90)  # X軸のラベルを90度回転して読みやすくする
