@@ -428,8 +428,8 @@ if st.sidebar.start_button:
    ###################################################################
     #折れ線グラフがきちんと表示されない点を改善
     ###################################################################
-    # データの読み込み
-    data = pd.read_csv('output_select.csv')  
+        # データの読み込み
+    data = pd.read_csv('output_select.csv')
 
     # 各駅ごとの物件数を計算
     station_counts = data['駅名'].value_counts().reset_index()
@@ -441,30 +441,31 @@ if st.sidebar.start_button:
     # 全体の家賃/平米の平均値を計算
     overall_avg_rent_per_sqm = data['家賃/平米'].mean()
 
+    # 駅名をキーにしてデータを結合
+    merged_data = station_counts.merge(station_avg_rent_per_sqm, on='駅名')
+
     # Streamlitアプリケーションの開始
     st.title('各駅ごとの物件数と家賃/平米の関係')
 
     # MatplotlibのFigureを作成
-    fig, ax1 = plt.subplots(figsize=(12, 6))
-    #plt.rcParams['font.family'] = 'MS Gothic'  # フォントをMS Gothicに設定
+    fig, ax1 = plt.subplots(figsize=(12, 6)
 
     # 物件数の棒グラフを描画（左側の軸）
-    ax1.bar(station_counts['駅名'], station_counts['物件数'], color='b', alpha=0.7)
+    ax1.bar(merged_data['駅名'], merged_data['物件数'], color='b', alpha=0.7)
     ax1.set_xlabel('駅名')
     ax1.set_ylabel('物件数（件）', color='b')
     ax1.tick_params(axis='y', labelcolor='b')
 
     # 家賃/平米の折れ線グラフを描画（右側の軸）
     ax2 = ax1.twinx()
-    ax2.plot(station_avg_rent_per_sqm['駅名'], station_avg_rent_per_sqm['家賃/平米'], marker='o', color='r', linestyle='-', markersize=6)
+    ax2.plot(merged_data['駅名'], merged_data['家賃/平米'], marker='o', color='r', linestyle='-', markersize=6)
     ax2.set_ylabel('家賃/平米（円）', color='r')
 
     # 全体平均の家賃/平米の折れ線グラフを描画（右側の軸）
     ax2.axhline(overall_avg_rent_per_sqm, color='b', linestyle='--', label='全体平均', linewidth=2)
 
     # 新たに追加: 全体平均の家賃/平米を赤い折れ線グラフで表示
-    ax2.plot([x for x in station_avg_rent_per_sqm['駅名']], [overall_avg_rent_per_sqm] * len(station_avg_rent_per_sqm), linestyle='--', color='red', label='全体平均', linewidth=2)
-
+    ax2.plot(merged_data['駅名'], [overall_avg_rent_per_sqm] * len(merged_data), linestyle='--', color='red', label='全体平均', linewidth=2)
 
     # グラフタイトル
     plt.title('各駅ごとの物件数と家賃/平米の関係')
@@ -479,6 +480,59 @@ if st.sidebar.start_button:
 
     # MatplotlibのFigureをStreamlitに表示
     st.pyplot(fig)
+
+    ###################################################################
+    # # データの読み込み
+    # data = pd.read_csv('output_select.csv')  
+
+    # # 各駅ごとの物件数を計算
+    # station_counts = data['駅名'].value_counts().reset_index()
+    # station_counts.columns = ['駅名', '物件数']
+
+    # # 各駅ごとの家賃/平米の平均値を計算
+    # station_avg_rent_per_sqm = data.groupby('駅名')['家賃/平米'].mean().reset_index()
+
+    # # 全体の家賃/平米の平均値を計算
+    # overall_avg_rent_per_sqm = data['家賃/平米'].mean()
+
+    # # Streamlitアプリケーションの開始
+    # st.title('各駅ごとの物件数と家賃/平米の関係')
+
+    # # MatplotlibのFigureを作成
+    # fig, ax1 = plt.subplots(figsize=(12, 6))
+    # #plt.rcParams['font.family'] = 'MS Gothic'  # フォントをMS Gothicに設定
+
+    # # 物件数の棒グラフを描画（左側の軸）
+    # ax1.bar(station_counts['駅名'], station_counts['物件数'], color='b', alpha=0.7)
+    # ax1.set_xlabel('駅名')
+    # ax1.set_ylabel('物件数（件）', color='b')
+    # ax1.tick_params(axis='y', labelcolor='b')
+
+    # # 家賃/平米の折れ線グラフを描画（右側の軸）
+    # ax2 = ax1.twinx()
+    # ax2.plot(station_avg_rent_per_sqm['駅名'], station_avg_rent_per_sqm['家賃/平米'], marker='o', color='r', linestyle='-', markersize=6)
+    # ax2.set_ylabel('家賃/平米（円）', color='r')
+
+    # # 全体平均の家賃/平米の折れ線グラフを描画（右側の軸）
+    # ax2.axhline(overall_avg_rent_per_sqm, color='b', linestyle='--', label='全体平均', linewidth=2)
+
+    # # 新たに追加: 全体平均の家賃/平米を赤い折れ線グラフで表示
+    # ax2.plot([x for x in station_avg_rent_per_sqm['駅名']], [overall_avg_rent_per_sqm] * len(station_avg_rent_per_sqm), linestyle='--', color='red', label='全体平均', linewidth=2)
+
+
+    # # グラフタイトル
+    # plt.title('各駅ごとの物件数と家賃/平米の関係')
+
+    # # 凡例を表示
+    # lines, labels = ax2.get_legend_handles_labels()
+    # ax2.legend(lines, labels, loc='upper left', fontsize='medium', title_fontsize='large')
+
+    # # グラフを表示
+    # plt.xticks(rotation=90)  # X軸のラベルを90度回転して読みやすくする
+    # plt.tight_layout()
+
+    # # MatplotlibのFigureをStreamlitに表示
+    # st.pyplot(fig)
     
 ##################################################
 #仮で地図を出してみる
