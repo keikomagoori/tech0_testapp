@@ -13,9 +13,6 @@ import os
 import shutil
 
 
-image = "image.JPG"  # 画像ファイルのパス
-st.image(image, caption="引っ越ししたその日に友達が呼べる住まいを", use_column_width=True)
-
 # Streamlitアプリのタイトル
 st.title("営業ターゲット分析／検索システム")
 
@@ -24,7 +21,7 @@ st.title("営業ターゲット分析／検索システム")
 base_url = "https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=13&sc=13106&sc=13107&sc=13108&sc=13118&sc=13121&sc=13122&sc=13123&cb=0.0&ct=9999999&et=9999999&md=01&md=02&md=03&md=04&md=05&md=06&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2=&srch_navi=1"
 
 # ページ数を指定
-total_pages = 5
+# total_pages = 10
 
 # データを格納するためのリストを初期化
 data = {
@@ -47,9 +44,9 @@ data = {
 # StreamlitのUI要素を追加
 #サイドバー
 place = st.sidebar.selectbox("エリア", ("", "台東区", "墨田区", "江東区", "荒川区", "足立区", "葛飾区", "江戸川区"))
-#total_pages = st.sidebar.selectbox("スクレイピングするページ数", list(range(1, 936)), index=9) # ページ数の選択
+total_pages = st.sidebar.selectbox("スクレイピングするページ数", list(range(1, 936)), index=9) # ページ数の選択
 flag = st.sidebar.selectbox("フラグ選択", ("", "ターゲットフラグ", "サブターゲットフラグ"))
-#stock = st.sidebar.text_input("滞留期間（W）")
+stock = st.sidebar.text_input("滞留期間（W）")
 year = st.sidebar.text_input("築年数(年)")
 access = st.sidebar.text_input("最短アクセス(~分以内)")
 monthly_fee = st.sidebar.selectbox("家賃",("絞り込みなし","平均以下","平均以上"))
@@ -261,17 +258,7 @@ if start_button:
     st.write(f"今回抽出された物件数は  {newest_row_count} 件です.")
     st.write(f"そのうち前回から滞留している物件は  {row_count} 件です.")
 
-# ######################################
-# #データに問題がある場合の処理
-# #####################################
-#     # CSVファイルを読み込む
-#     df = pd.read_csv('tairyubukken.csv', error_bad_lines=False)
 
-#     # 不要な行を削除
-#     df = df.dropna()
-
-#     # 新しいCSVファイルに保存
-#     df.to_csv('cleaned_tairyubukken.csv', index=False)
 
 ####フィルタリングコードを追加###################################################
 
@@ -340,91 +327,85 @@ if start_button:
     # グラフを表示
     st.pyplot(plt)
 
-##########################################
+#########################################################################
+    # データの読み込み
+    data = pd.read_csv('output_select.csv')  
+ 
+    # 各駅ごとの家賃/平米の平均値を棒グラフで表示
+    
+    # 各駅ごとの家賃/平米の平均値を計算
+    station_avg_rent_per_sqm = data.groupby('駅名')['家賃/平米'].mean().reset_index()
 
-#追加グラフ２
+    # Streamlitアプリケーションの開始
+    st.title('各駅ごとの家賃/平米の平均値')
+
+    # MatplotlibのFigureを作成
+    fig, ax = plt.subplots(figsize=(12, 6))
+    #plt.rcParams['font.family'] = 'MS Gothic'  # フォントをMS Gothicに設定
+
+    # 各駅ごとの家賃/平米の平均値を棒グラフで表示
+    ax.bar(station_avg_rent_per_sqm['駅名'], station_avg_rent_per_sqm['家賃/平米'], color='b', alpha=0.7)
+    ax.set_xlabel('駅名')
+    ax.set_ylabel('家賃/平米')
+    ax.set_title('各駅ごとの家賃/平米の平均値')
+    plt.xticks(rotation=90)  # X軸のラベルを90度回転して読みやすくする
+
+    # グラフを表示
+    st.pyplot(fig)
+
+    ##################################################################
+    #折れ線グラフがきちんと表示されない点を改善
+    ###################################################################
+
     # データの読み込み
     data = pd.read_csv('output_select.csv')
 
-    # 駅名ごとのカウントを取得
+    # 各駅ごとの物件数を計算
     station_counts = data['駅名'].value_counts().reset_index()
     station_counts.columns = ['駅名', '物件数']
 
     # 各駅ごとの家賃/平米の平均値を計算
     station_avg_rent_per_sqm = data.groupby('駅名')['家賃/平米'].mean().reset_index()
 
-    # 物件数と家賃/平米のデータを駅名をキーにして結合
-    merged_data = station_avg_rent_per_sqm.merge(station_counts, on='駅名', how='inner')
+    # 全体の家賃/平米の平均値を計算
+    overall_avg_rent_per_sqm = data['家賃/平米'].mean()
 
-    # 平均値でソート
-    merged_data = merged_data.sort_values(by='家賃/平米', ascending=False)
+    # 駅名をキーにしてデータを結合
+    merged_data = station_counts.merge(station_avg_rent_per_sqm, on='駅名')
 
     # Streamlitアプリケーションの開始
-    st.title('各駅ごとの家賃/平米の平均値と物件数')
+    st.title('各駅ごとの物件数と家賃/平米の関係')
 
     # MatplotlibのFigureを作成
     fig, ax1 = plt.subplots(figsize=(12, 6))
-    ax2 = ax1.twinx()
 
-    # 各駅ごとの家賃/平米の平均値を棒グラフで表示
-    ax1.bar(merged_data['駅名'], merged_data['家賃/平米'], color='b', alpha=0.7, label='家賃/平米')
+    # 物件数の棒グラフを描画（左側の軸）
+    ax1.bar(merged_data['駅名'], merged_data['物件数'], color='b', alpha=0.7)
     ax1.set_xlabel('駅名')
-    ax1.set_ylabel('家賃/平米')
-    ax1.set_title('各駅ごとの家賃/平米の平均値（高い順）')
-    ax1.set_xticklabels(merged_data['駅名'], rotation=90)
+    ax1.set_ylabel('物件数（件）', color='b')
+    ax1.tick_params(axis='y', labelcolor='b')
 
-    # 物件数を折れ線グラフで表示
-    ax2.plot(merged_data['駅名'], merged_data['物件数'], color='r', marker='o', label='物件数')
-    ax2.set_ylabel('物件数')
+    # 家賃/平米の折れ線グラフを描画（右側の軸）
+    ax2 = ax1.twinx()
+    ax2.plot(merged_data['駅名'], merged_data['家賃/平米'], marker='o', color='r', linestyle='-', markersize=6)
+    ax2.set_ylabel('家賃/平米（円）', color='r')
+
+    # 全体平均の家賃/平米の折れ線グラフを描画（右側の軸）
+    ax2.axhline(overall_avg_rent_per_sqm, color='b', linestyle='--', label='全体平均', linewidth=2)
+
+    # 新たに追加: 全体平均の家賃/平米を赤い折れ線グラフで表示
+    ax2.plot(merged_data['駅名'], [overall_avg_rent_per_sqm] * len(merged_data), linestyle='--', color='red', label='全体平均', linewidth=2)
+
+    # グラフタイトル
+    plt.title('各駅ごとの物件数と家賃/平米の関係')
 
     # 凡例を表示
-    ax1.legend(loc='upper left')
-    ax2.legend(loc='upper right')
+    lines, labels = ax2.get_legend_handles_labels()
+    ax2.legend(lines, labels, loc='upper left', fontsize='medium', title_fontsize='large')
 
     # グラフを表示
-    st.pyplot(fig)
-
-    #################################
-#追加グラフ２　滞留物件_仲介業者カウント
-    # CSVファイルの読み込み
-    df = pd.read_csv('tairyubukken.csv')
-
-    # '仲介業者'ごとにデータを集計します
-    aggregated_data = df.groupby('仲介業者').agg({
-        '物件名': 'count'  # 物件名のカウント
-    })
-
-    # 列名をリネームします
-    aggregated_data = aggregated_data.rename(columns={
-        '物件名': '物件数'
-    })
-    # データを多い順にソート
-    aggregated_data = aggregated_data.sort_values(by='物件数', ascending=False)
-
-    # タイトルを表示
-    st.write('滞留物件を持つ仲介業者リスト')
-
-    # 結果をStreamlitで表示
-    st.write(aggregated_data)
-
-    ##########################################
-    #滞留物件のある駅名
-    data = pd.read_csv('tairyubukken.csv')  
-    # 駅名ごとのカウントを取得
-    station_counts = df['駅名'].value_counts()
-    
-    # グラフの作成
-    plt.figure(figsize=(12, 6))
-    #plt.rcParams['font.family'] = 'MS Gothic'  # フォントをMS Gothicに設定=文字化け対策！
-
-    ax = station_counts.plot(kind='bar')
-    plt.title('駅名ごとの物件数')
-    plt.xlabel('駅名')
-    plt.ylabel('物件数')
     plt.xticks(rotation=90)  # X軸のラベルを90度回転して読みやすくする
+    plt.tight_layout()
 
-    # 凡例を日本語フォントで表示
-    #ax.legend(prop={'family': 'MS Gothic'})
-
-    # グラフを表示
-    st.pyplot(plt)
+    # MatplotlibのFigureをStreamlitに表示
+    st.pyplot(fig)
